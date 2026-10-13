@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     String imageUrl = null;
     Bitmap bmImg = null;
 
+    RecyclerView recyclerView;
+
     CloadImage taskDownload;
 
     @Override
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = findViewById(R.id.textView);
+        recyclerView = findViewById(R.id.recyclerView);
     }
 
     public void onClickDownload(View v) {
@@ -114,6 +118,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return bitmapList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Bitmap> bitmaps) {
+            recyclerView.setAdapter(new ImageAdapter(bitmaps));
+            textView.setText("이미지 로드 완료!");
         }
     }
 }
