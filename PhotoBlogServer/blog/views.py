@@ -3,6 +3,8 @@ from django.utils import timezone
 from .models import Post
 from .forms import PostForm
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .serializers import PostSerializer
 
 def post_list(request):
@@ -48,3 +50,6 @@ def js_test(request):
 class IntruderImage(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
