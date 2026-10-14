@@ -60,4 +60,5 @@ h1, h2, h3, h4 {
 
 .intruder-image-list {
     object-fit: cover;
+    width: 100%; /* 이미지가 너무 커서 잘림 */
 }
