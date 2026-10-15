@@ -3,8 +3,10 @@ from django.utils import timezone
 from .models import Post
 from .forms import PostForm
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .serializers import PostSerializer
 
 def post_list(request):
@@ -53,3 +55,15 @@ class IntruderImage(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    # JSON 응답 받는 형태로 접근하기 위함
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        post.liked_by.add(request.user)
+        return Response({'liked': True})
+
+    @action(detail=True, methods=['post'], url_path='like/cancel', permission_classes=[IsAuthenticated])
+    def like_cancel(self, request, pk=None):
+        post = self.get_object()
+        post.liked_by.remove(request.user)
+        return Response({'liked': False})

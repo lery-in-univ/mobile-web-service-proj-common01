@@ -8,6 +8,7 @@ class Post(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
     image = models.ImageField(upload_to='images/%Y/%m/%d/', default='images/default_error.png')
+    liked_by = models.ManyToManyField('auth.User', blank=True, related_name='liked_posts')
 
     def publish(self):
         self.published_date = timezone.now()
