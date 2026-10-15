@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     String token = "53a6b4128358f3e8631661cc317f16765295699d";
 
     RecyclerView recyclerView;
+    List<Integer> postIds = new ArrayList<>();
 
     CloadImage taskDownload;
     CuploadImage taskUpload;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected List<Bitmap> doInBackground(String... urls) {
             List<Bitmap> bitmapList = new ArrayList<>();
+            List<Integer> loadedIds = new ArrayList<>();
 
             try {
                 String apiUrl = urls[0];
@@ -132,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
                             Bitmap imageBitmap = BitmapFactory.decodeStream(imgStream);
                             bitmapList.add(imageBitmap);
+                            loadedIds.add(post_json.getInt("id"));
                             imgStream.close();
                         }
                     }
@@ -140,12 +143,20 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            postIds = loadedIds;
             return bitmapList;
         }
 
         @Override
         protected void onPostExecute(List<Bitmap> bitmaps) {
-            recyclerView.setAdapter(new ImageAdapter(bitmaps));
+            recyclerView.setAdapter(new ImageAdapter(bitmaps, position -> {
+                // 사진 선택하면 상세 페이지로 이동
+                android.content.Intent intent = new android.content.Intent(MainActivity.this, PostDetailActivity.class);
+                intent.putExtra("post_id", postIds.get(position));
+                intent.putExtra("site_url", site_url);
+                intent.putExtra("token", token);
+                startActivity(intent);
+            }));
             textView.setText("이미지 로드 완료!");
         }
     }
